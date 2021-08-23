@@ -3,6 +3,7 @@ package sd
 import (
 	"fmt"
 	"github.com/gin-gonic/gin"
+	log "github.com/sirupsen/logrus"
 	"net/http"
 
 	"github.com/shirou/gopsutil/cpu"
@@ -20,6 +21,7 @@ const (
 )
 
 func HealthCheck(c *gin.Context) {
+	log.Println("request method HealthCheck()")
 	c.String(http.StatusOK, "OK\n")
 }
 

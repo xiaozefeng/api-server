@@ -3,8 +3,10 @@ package config
 import (
 	"github.com/fsnotify/fsnotify"
 	"github.com/spf13/viper"
-	"log"
+	"os"
 	"strings"
+
+	log "github.com/sirupsen/logrus"
 )
 
 func Init(filename string) error {
@@ -12,11 +14,14 @@ func Init(filename string) error {
 	if err := initConfig(filename); err != nil {
 		return err
 	}
-	watch(filename)
+	if err := initLog(); err != nil {
+		return err
+	}
+	watch()
 	return nil
 }
 
-func watch(filename string) {
+func watch() {
 	viper.WatchConfig()
 	viper.OnConfigChange(func(e fsnotify.Event) {
 		log.Printf("config file changed: %s", e.Name)
@@ -36,4 +41,16 @@ func initConfig(filename string) error {
 	replacer := strings.NewReplacer(".", "_")
 	viper.SetEnvKeyReplacer(replacer)
 	return viper.ReadInConfig()
+}
+
+func initLog() error {
+	log.SetFormatter(&log.JSONFormatter{})
+	logPath := viper.GetString("log_path")
+	dist, err := os.Create(logPath)
+	if err != nil {
+		return err
+	}
+	log.SetOutput(dist)
+	log.SetLevel(log.InfoLevel)
+	return nil
 }

@@ -6,11 +6,13 @@ import (
 	"errors"
 	"flag"
 	"github.com/gin-gonic/gin"
+	log "github.com/sirupsen/logrus"
 	"github.com/spf13/viper"
-	"log"
+
 	"net/http"
 	"time"
 )
+
 var (
 	cfg string
 )
@@ -20,10 +22,9 @@ func main() {
 	flag.Parse()
 
 	err := config.Init(cfg)
-	if err!=nil {
+	if err != nil {
 		panic(err)
 	}
-
 
 	gin.SetMode(viper.GetString("runmode"))
 	g := gin.New()
@@ -37,14 +38,14 @@ func main() {
 		}
 		log.Print("the router has been deployed successfully")
 	}()
-	port:=viper.GetString("port")
+	port := viper.GetString("port")
 	log.Printf("start to listening the incoming requests on http address: %s", port)
 	log.Printf(http.ListenAndServe(port, g).Error())
 
 }
 
 func pingServer() error {
-	url := "http://127.0.0.1" +viper.GetString("port") + "/sd/health"
+	url := "http://127.0.0.1" + viper.GetString("port") + "/sd/health"
 	for i := 0; i < 2; i++ {
 		response, err := http.Get(url)
 		if err == nil && response.StatusCode == http.StatusOK {
