@@ -1,0 +1,3 @@
+runmode: debug
+port: :8080
+max_ping_count: 10
