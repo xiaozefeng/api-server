@@ -21,7 +21,7 @@ const (
 )
 
 func HealthCheck(c *gin.Context) {
-	log.Println("request method HealthCheck()")
+	log.Info("request method HealthCheck()")
 	c.String(http.StatusOK, "OK\n")
 }
 

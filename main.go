@@ -2,6 +2,7 @@ package main
 
 import (
 	"api-server/config"
+	"api-server/db"
 	"api-server/router"
 	"errors"
 	"flag"
@@ -25,6 +26,14 @@ func main() {
 	if err != nil {
 		panic(err)
 	}
+	log.Info("init config successfully")
+
+	// init DB
+	err = db.Init()
+	if err != nil {
+		panic(err)
+	}
+	log.Info("init db successfully")
 
 	gin.SetMode(viper.GetString("runmode"))
 	g := gin.New()
@@ -36,11 +45,11 @@ func main() {
 		if err := pingServer(); err != nil {
 			log.Fatal("the router has no response, or it might took too long to start up.", err)
 		}
-		log.Print("the router has been deployed successfully")
+		log.Info("the router has been deployed successfully")
 	}()
 	port := viper.GetString("port")
-	log.Printf("start to listening the incoming requests on http address: %s", port)
-	log.Printf(http.ListenAndServe(port, g).Error())
+	log.Infof("start to listening the incoming requests on http address: %s", port)
+	log.Infof(http.ListenAndServe(port, g).Error())
 
 }
 
@@ -51,7 +60,7 @@ func pingServer() error {
 		if err == nil && response.StatusCode == http.StatusOK {
 			return nil
 		}
-		log.Print("waiting for the router, retry in 1 second")
+		log.Info("waiting for the router, retry in 1 second")
 		time.Sleep(time.Second)
 	}
 	return errors.New("cannot connect to router")
