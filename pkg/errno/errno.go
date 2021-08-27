@@ -2,37 +2,37 @@ package errno
 
 import "fmt"
 
-type Err struct {
+type err struct {
 	code    int
 	message string
 }
 
-func (e Err) Error() string {
+func (e err) Error() string {
 	return fmt.Sprintf("code:%d, message:%s", e.code, e.message)
 }
 
 var (
-	ok                  = &Err{0, "ok"}
-	internalServerError = &Err{10001, "internal server error"}
-	errBind             = &Err{10002, "binding the request body to the struct failed"}
+	ok                  = &err{0, "ok"}
+	internalServerError = &err{10001, "internal server error"}
+	errBind             = &err{10002, "binding the request body to the struct failed"}
 
-	errUserNotFound = &Err{20102, "user was not found "}
+	errUserNotFound = &err{20102, "user was not found "}
 )
 
-func IsOK(err error) bool {
-	t, b := err.(Err)
+func IsOK(e error) bool {
+	t, b := e.(err)
 	return b && t.code == ok.code
 }
 
-func IsInterServerError(err error) bool {
-	t, b := err.(Err)
+func IsInterServerError(e error) bool {
+	t, b := e.(err)
 	return b && t.code == internalServerError.code
 }
-func IsBindingError(err error) bool {
-	t, b := err.(Err)
+func IsBindingError(e error) bool {
+	t, b := e.(err)
 	return b && t.code == errBind.code
 }
-func IsUserNotFoundError(err error) bool {
-	t, b := err.(Err)
+func IsUserNotFoundError(e error) bool {
+	t, b := e.(err)
 	return b && t.code == errUserNotFound.code
 }
